@@ -323,7 +323,7 @@ const priorityMenuHandler = {
       const row = new ActionRowBuilder().addComponents(menu);
 
       await interaction.reply({
-        content: '⚡ **Select the new priority for this ticket:**',
+        content: '💼 **Select the new priority for this ticket:**',
         components: [row],
         flags: MessageFlags.Ephemeral
       });
