@@ -517,14 +517,15 @@ const deleteTicketHandler = {
 };
 
 export default createTicketHandler;
-export { 
-  createTicketModalHandler, 
+export {
+  createTicketModalHandler,
   closeTicketModalHandler,
-  closeTicketHandler, 
-  claimTicketHandler, 
+  closeTicketHandler,
+  claimTicketHandler,
   priorityTicketHandler,
+  priorityMenuHandler,
   pinTicketHandler,
   unclaimTicketHandler,
   reopenTicketHandler,
-  deleteTicketHandler 
+  deleteTicketHandler
 };
