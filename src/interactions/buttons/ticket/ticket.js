@@ -7,7 +7,7 @@ import createTicketHandler, {
   unclaimTicketHandler,
   reopenTicketHandler,
   deleteTicketHandler,
-} from '../../../handlers/ticketButtons.js';
+} from '../../../handlers/ticketButtons.js'
 
 export default [
   createTicketHandler,
@@ -19,4 +19,4 @@ export default [
   unclaimTicketHandler,
   reopenTicketHandler,
   deleteTicketHandler,
-];
+]
