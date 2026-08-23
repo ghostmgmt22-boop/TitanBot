@@ -274,31 +274,68 @@ const claimTicketHandler = {
   }
 };
 
-const priorityTicketHandler = {
-  name: 'ticket_priority',
-  async execute(interaction, client, args) {
+const priorityMenuHandler = {
+  name: 'ticket_priority_menu',
+
+  async execute(interaction, client) {
     try {
       if (!(await ensureGuildContext(interaction))) return;
 
-      await assertTicketPermission(interaction, client, 'change ticket priority', {}, 2000);
+      // Checks if the user can manage tickets
+      await assertTicketPermission(
+        interaction,
+        client,
+        'change ticket priority',
+        {},
+        2000
+      );
 
-      const deferSuccess = await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
-      if (!deferSuccess) return;
-      
-      const priority = args?.[0];
-      if (!priority) {
-        await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'A priority value is required.' });
-        return;
-      }
+      const menu = new StringSelectMenuBuilder()
+        .setCustomId('ticket_priority_select')
+        .setPlaceholder('Select a priority level')
+        .addOptions([
+          {
+            label: 'Low',
+            description: 'Low priority ticket',
+            value: 'low',
+            emoji: '🟢'
+          },
+          {
+            label: 'Medium',
+            description: 'Medium priority ticket',
+            value: 'medium',
+            emoji: '🟡'
+          },
+          {
+            label: 'High',
+            description: 'High priority ticket',
+            value: 'high',
+            emoji: '🔴'
+          },
+          {
+            label: 'Urgent',
+            description: 'Urgent priority ticket',
+            value: 'urgent',
+            emoji: '🚨'
+          }
+        ]);
 
-      await updateTicketPriority(interaction.channel, priority, interaction.user);
-      await interaction.editReply({ embeds: [successEmbed('Priority Updated', `Ticket priority set to **${priority.toUpperCase()}**.`)] });
+      const row = new ActionRowBuilder().addComponents(menu);
+
+      await interaction.reply({
+        content: '⚡ **Select the new priority for this ticket:**',
+        components: [row],
+        flags: MessageFlags.Ephemeral
+      });
+
     } catch (error) {
-      logger.error('Error updating ticket priority:', error);
+      logger.error('Error opening priority menu:', error);
+
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while updating the priority.' });
-      } else if (interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while updating the priority.' });
+        await replyUserError(interaction, {
+          type: ErrorTypes.UNKNOWN,
+          message: 'An error occurred while opening the priority menu.'
+        });
       }
     }
   }
