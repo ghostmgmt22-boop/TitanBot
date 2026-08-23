@@ -130,8 +130,8 @@ const createTicketHandler = {
       const currentTicketCount = await getUserTicketCount(interaction.guildId, interaction.user.id);
       
       if (currentTicketCount >= maxTicketsPerUser) {
-        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `You have reached the maximum number of open tickets (${maxTicketsPerUser}).\n\nPlease close your existing tickets before creating a new one.\n\n**Current Tickets:** ${currentTicketCount}/${maxTicketsPerUser}` });
-      }
+  return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `You have reached the maximum number of open tickets (${maxTicketsPerUser}).\n\nPlease close your existing tickets before creating more.` });
+}
       
       const modal = new ModalBuilder()
         .setCustomId('create_ticket_modal')
@@ -515,15 +515,41 @@ const deleteTicketHandler = {
     }
   }
 };
+const prioritySelectHandler = {
+  name: 'ticket_priority_select',
+  async execute(interaction, client) {
+    try {
+      if (!(await ensureGuildContext(interaction))) return;
 
+      await assertTicketPermission(interaction, client, 'change ticket priority', {}, 2000);
+
+      const deferSuccess = await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
+      if (!deferSuccess) return;
+
+      const priority = interaction.values[0];
+      await updateTicketPriority(interaction.channel, interaction.user, priority);
+      
+      await interaction.editReply({ 
+        embeds: [successEmbed('Priority Updated', `Ticket priority has been set to **${priority.toUpperCase()}**.`)] 
+      });
+    } catch (error) {
+      logger.error('Error updating ticket priority:', error);
+      if (!interaction.replied && !interaction.deferred) {
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while updating the priority.' });
+      } else if (interaction.deferred) {
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while updating the priority.' });
+      }
+    }
+  }
+};
 export default createTicketHandler;
 export {
   createTicketModalHandler,
   closeTicketModalHandler,
   closeTicketHandler,
   claimTicketHandler,
-  priorityTicketHandler,
   priorityMenuHandler,
+  prioritySelectHandler,
   pinTicketHandler,
   unclaimTicketHandler,
   reopenTicketHandler,
