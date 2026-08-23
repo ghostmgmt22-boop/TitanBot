@@ -57,16 +57,24 @@ function buildTicketControlRow({ claimedBy = null } = {}) {
       .setStyle(claimedBy ? ButtonStyle.Secondary : ButtonStyle.Primary)
       .setEmoji('🙋')
       .setDisabled(!!claimedBy),
+
+    new ButtonBuilder()
+      .setCustomId('ticket_priority_menu')
+      .setLabel('Priority')
+      .setStyle(ButtonStyle.Secondary)
+      .setEmoji('⚡'),
+
     new ButtonBuilder()
       .setCustomId('ticket_pin')
       .setLabel('Pin')
       .setStyle(ButtonStyle.Secondary)
       .setEmoji('📌'),
+
     new ButtonBuilder()
       .setCustomId('ticket_close')
       .setLabel('Close')
       .setStyle(ButtonStyle.Danger)
-      .setEmoji('🔒'),
+      .setEmoji('🔒')
   );
 }
 
