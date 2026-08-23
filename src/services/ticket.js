@@ -193,20 +193,6 @@ export async function createTicket(guild, member, categoryId, reason = 'No reaso
     
     const row = buildTicketControlRow();
     
-    if (ticketConfig.enablePriority) {
-      row.addComponents(
-        new ButtonBuilder()
-          .setCustomId('ticket_priority:low')
-          .setLabel('Low')
-          .setStyle(ButtonStyle.Secondary)
-          .setEmoji('🔵'),
-        new ButtonBuilder()
-          .setCustomId('ticket_priority:high')
-          .setLabel('High')
-          .setStyle(ButtonStyle.Danger)
-          .setEmoji('🔴')
-      );
-    }
     
     const staffMention = config.ticketStaffRoleId ? ` <@&${config.ticketStaffRoleId}>` : '';
     const messageContent = `${member.toString()}${staffMention}`;
